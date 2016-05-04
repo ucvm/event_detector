@@ -3,6 +3,7 @@
 export(baseline_correct)
 export(detect_peaks)
 export(filter_by_tracks)
+export(get_stats)
 export(plot_number_of_peaks)
 export(plot_tracks)
 export(plot_width_of_peaks)

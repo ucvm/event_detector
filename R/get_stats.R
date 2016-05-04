@@ -1,4 +1,14 @@
-
+#' Get well stats
+#'
+#' Get stats about peaks present in each well
+#'
+#' @param data intensity data
+#' @param peaks peak data from \code{\link{detect_peaks}}
+#'
+#' @return a data.frame with the data summarized by well.  Contains columns for the number of
+#'   tracks, number of events and stats on the peak width and number of peaks.
+#' @export
+#'
 get_stats = function(data, peaks) {
   num_tracks = data %>%
     ungroup() %>% group_by(Well)  %>%

@@ -37,7 +37,7 @@ detect_peaks = function(data, ...) {
     spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
 
   spectra = spectra[1,]
-  peak_idx = findpeaks(spectra, ...)
+  peak_idx = pracma::findpeaks(spectra, ...)
   if (class(peak_idx) == "numeric") {
     peak_idx = matrix(peak_idx, ncol = 4)
   }
@@ -69,7 +69,7 @@ baseline_correct = function(data) {
     dplyr::select(Intensity, Time) %>%
     spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
 
-  bc = baseline(spectra, method = "irls")
-  corrected = getCorrected(bc)[1,]
+  bc = baseline::baseline(spectra, method = "irls")
+  corrected = baseline::getCorrected(bc)[1,]
   return(data.frame(Time = as.numeric(names(corrected)), Intensity = corrected))
 }
