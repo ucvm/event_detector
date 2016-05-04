@@ -3,8 +3,18 @@ Type: Package
 Title: Detect fluorescence peaks in a macrophage phagasome assay
 Version: 1.0.0
 Authors@R: person("Matthew", "Workentine", email = "matthew.workentine@ucalgary.ca", role = c("aut", "cre"))
-Description: This package was created primarily to hold the functions for a Shiny app written to process data
-  from a fluorescence macrophage phagasome assay.  Although designed for a Shiny app, the functions here can be
-  used independently.
+Description: This package was created primarily to hold the functions for a
+    Shiny app written to process data from a fluorescence macrophage phagasome
+    assay. Although designed for a Shiny app, the functions here can be used
+    independently.
 License: None
 LazyData: TRUE
+Imports:
+    dplyr,
+    tidyr,
+    baseline,
+    pracma,
+    readr,
+    stringr,
+    ggplot2
+RoxygenNote: 5.0.1
