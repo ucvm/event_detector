@@ -1,0 +1,55 @@
+
+
+plot_number_of_peaks = function(peak_stats, peaks) {
+  cols = colorRampPalette(brewer.pal(11, "Spectral"))(50)
+  peaks %>% ungroup() %>% group_by(Well) %>% count(Label) %>% ungroup() %>%
+    mutate(Well = factor(Well, levels = peak_stats$Well)) %>%
+    ggplot(aes(x = Well, y = n)) + geom_boxplot(aes(fill = ..middle..)) +
+    scale_fill_gradientn(colours = cols) +
+    theme_bw() + labs(y = "Number of Peaks") +
+    theme(legend.position = "none")
+}
+
+plot_width_of_peaks = function(peak_stats, peaks) {
+
+  cols = colorRampPalette(brewer.pal(11, "Spectral"))(50)
+  peaks %>% ungroup() %>% group_by(Well) %>%  ungroup() %>%
+    mutate(Well = factor(Well, levels = peak_stats$Well)) %>%
+    ggplot(aes(x = Well, y = Width)) +
+    geom_boxplot(aes(fill = ..middle..)) +
+    scale_fill_gradientn(colours = cols) + theme_bw() +
+    labs(y = "Width of Peaks (min)")
+
+}
+
+plot_tracks = function(data, well = "All", y = "Intensity", peak_data = NULL,
+                       filter_peaks = FALSE, show_peaks = TRUE) {
+  if(!"All" %in% well){
+    data  = data %>%  filter(Well %in% well)
+    peak_data = peak_data %>% filter(Well %in% well)
+  }
+
+  if (filter_peaks && !is.null(peak_data)) {
+    data = data %>% semi_join(peak_data, by = c("Well", "Label"))
+  }
+
+  num_sec = length(unique(data$Well))
+  cols = colorRampPalette(brewer.pal(9, "Set1"))(num_sec + 1)
+
+  plot = data %>%
+    ggplot(aes_string(x = "Time", y = y , group = "Label", colour = "Well")) +
+    geom_line() +
+    facet_wrap(Well ~ Label, labeller = labeller(.default = label_value, .multi_line = FALSE)) +
+    scale_colour_manual(values = cols[2:length(cols)]) +
+    theme_bw() +
+    theme(panel.margin = unit(0, "lines"), strip.background  = element_rect(fill = "grey95")) +
+    labs(x = "Time (min)")
+
+  if (show_peaks && !is.null(peak_data) ) {
+    plot = plot + geom_point(data = peak_data, colour = cols[1])
+
+  }
+
+  return(plot)
+
+}
