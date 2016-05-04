@@ -5,9 +5,9 @@ R package to detect peaks in fluorescence macrophage phagocytosis assay.  Includ
 
 ## Install
 
-Easiest way to is used `devtools`
+Easiest way to is to use `devtools`
 
-```
+```R
 # if you don't already have it
 install.packages("devtools")
 
