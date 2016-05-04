@@ -2,6 +2,7 @@
 
 export(baseline_correct)
 export(detect_peaks)
+export(event_detector)
 export(filter_by_tracks)
 export(get_stats)
 export(plot_number_of_peaks)
