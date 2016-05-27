@@ -4,15 +4,18 @@
 \alias{read_data}
 \title{Read the raw data into memory}
 \usage{
-read_data(path, flag = "Calibration", convert_time = 1000 * 60)
+read_data(path, section = "Calibration", convert_time = 1000 * 60,
+  channel = "Ch 3")
 }
 \arguments{
 \item{path}{File path of the csv file}
 
-\item{flag}{Name of the section to import. Default is 'Calibration'.}
+\item{section}{Name of the section to import. Default is 'Calibration'.}
 
 \item{convert_time}{Conversion factor for the time column.  Default is \eqn{1000 * 60} (converts
 milliseconds to minutes). NULL means no conversion will be performed.}
+
+\item{channel}{The channel to use for intensity measurements. Default is 'Ch 3'}
 }
 \value{
 dataframe

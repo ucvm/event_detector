@@ -16,6 +16,7 @@
 #' @return dataframe
 #'
 #' @import dplyr
+#' @import stringr
 #'
 #' @export
 
@@ -24,11 +25,11 @@ read_data = function(path, section = "Calibration", convert_time = 1000 * 60, ch
   raw = readr::read_lines(path)
 
   # mark the start of the section of interest and stop if we can't find it
-  startidx = which(stringr::str_detect(raw, section)) + 1
-  if(length(startidx) == 0) stop("Couldn't find section named ", section)
+  startidx = which(str_detect(raw, section)) + 1
+  if (length(startidx) == 0) stop("Couldn't find section named ", section)
 
 
-  markers = which(stringr::str_detect(raw,"==========")) # find all the other markers
+  markers = which(str_detect(raw,"==========")) # find all the other markers
   markers = markers[markers > startidx]  # get rid of ones above our start
   endidx = length(raw) # set the end index
 
