@@ -40,7 +40,7 @@ test_that("Test that new protocol with field works", {
 
 test_that("Test that new protocol with no field works", {
   d = read_data("new_protocol_no_field.csv", section = "cy5", channel = "Ch 3")
-  expect_identical(d$Well, field_well)
+  expect_identical(d$Well, no_field_well)
   expect_identical(d$Label, label)
   expect_equal(d$Time, time)
   expect_identical(d$Intensity, intensity)

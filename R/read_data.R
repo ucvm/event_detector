@@ -8,7 +8,7 @@
 #' extraneous columns and extracting the well name and multiple fields of view if present.
 #'
 #' @param path File path of the csv file
-#' @param section Name of the section to import. Default is 'Calibration'.
+#' @param section Name of the section to import. Default is 'cy5'.
 #' @param convert_time Conversion factor for the time column.  Default is \eqn{1000 * 60} (converts
 #'   milliseconds to minutes). NA means no conversion will be performed.
 #' @param channel The channel to use for intensity measurements. Default is 'Ch 3'
@@ -20,7 +20,7 @@
 #'
 #' @export
 
-read_data = function(path, section = "Calibration", convert_time = 1000 * 60, channel = "Ch 3") {
+read_data = function(path, section = "cy5", convert_time = 1000 * 60, channel = "Ch 3") {
 
   raw = readr::read_lines(path)
 
