@@ -27,7 +27,7 @@ get_stats = function(data, peaks) {
               `Sd peak width` = sd(Width),
               `Median peak width` = median(Width))
 
-  peaks %>% ungroup() %>% group_by(Well) %>% count(Label) %>%
+  peaks %>% ungroup() %>% group_by(Well) %>% count(Well, Label) %>%
     summarise(`Mean Peaks` = mean(n),
               `Max Peaks` = max(n),
               `Min Peaks` = min(n),

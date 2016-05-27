@@ -34,7 +34,7 @@ filter_by_tracks = function(data, track_size_cutoff){
 detect_peaks = function(data, ...) {
   spectra = data %>%
     dplyr::select(Intensity, Time) %>%
-    spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
+    tidyr::spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
 
   spectra = spectra[1,]
   peak_idx = pracma::findpeaks(spectra, ...)
@@ -67,7 +67,7 @@ detect_peaks = function(data, ...) {
 baseline_correct = function(data) {
   spectra = data %>%
     dplyr::select(Intensity, Time) %>%
-    spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
+    tidyr::spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
 
   bc = baseline::baseline(spectra, method = "irls")
   corrected = baseline::getCorrected(bc)[1,]

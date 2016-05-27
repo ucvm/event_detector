@@ -10,7 +10,7 @@
 #' @export
 plot_number_of_peaks = function(peak_stats, peaks) {
   cols = colorRampPalette(brewer.pal(11, "Spectral"))(50)
-  peaks %>% ungroup() %>% group_by(Well) %>% count(Label) %>% ungroup() %>%
+  peaks %>% ungroup() %>% group_by(Well) %>% count(Well, Label) %>% ungroup() %>%
     mutate(Well = factor(Well, levels = peak_stats$Well)) %>%
     ggplot(aes(x = Well, y = n)) + geom_boxplot(aes(fill = ..middle..)) +
     scale_fill_gradientn(colours = cols) +
