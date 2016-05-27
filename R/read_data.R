@@ -10,7 +10,7 @@
 #' @param path File path of the csv file
 #' @param section Name of the section to import. Default is 'Calibration'.
 #' @param convert_time Conversion factor for the time column.  Default is \eqn{1000 * 60} (converts
-#'   milliseconds to minutes). NULL means no conversion will be performed.
+#'   milliseconds to minutes). NA means no conversion will be performed.
 #' @param channel The channel to use for intensity measurements. Default is 'Ch 3'
 #'
 #' @return dataframe
@@ -78,14 +78,14 @@ read_data = function(path, section = "Calibration", convert_time = 1000 * 60, ch
     message("Detected multiple fields")
     raw = raw %>%
       tidyr::extract(Section, c("Row", "Col", "Field" ), "([A-Z]{1}) - ([0-9]+) \\(fld ([12]{1}) - .*\\)") %>%
-      tidyr::unite(Well, Row, Col, sep = "") %>% unite(Well, Well, Field, sep = "_")
+      tidyr::unite(Well, Row, Col, sep = "") %>% tidyr::unite(Well, Well, Field, sep = "_")
   } else {
     message("No fields detected")
     raw = raw %>%
       tidyr::extract(Section, c("Row", "Col" ), "([A-Z]{1}) - ([0-9]+)") %>%
       tidyr::unite(Well, Row, Col, sep = "")
   }
-  if (!is.na(convert_time)) {
+  if (!is.na(convert_time) && is.numeric(convert_time)) {
     raw = raw %>% mutate(Time = Time / convert_time)
   }
   return(raw)
