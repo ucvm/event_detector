@@ -90,3 +90,30 @@ read_data = function(path, section = "cy5", convert_time = 1000 * 60, channel = 
   }
   return(raw)
 }
+
+
+#' Scan file
+#'
+#' Scan raw file for channels and sections
+#'
+#' @param path file path of the csv file
+#'
+#' @return list Returns a named list with two entries, channels and sections
+#' @export
+#'
+#' @examples
+scan_file = function(path) {
+
+  raw = readr::read_lines(path)
+
+  # get sections
+  sections = raw[str_detect(raw, "=========")]
+  sections = str_match(sections, "=+>(.*)<==+")[,2]
+
+  channels = paste(raw[str_detect(raw, "Ch")], collapse = "")
+  channels = str_split(channels, ",")[[1]]
+  channels = unique(channels[channels != ""])
+
+  return(list(channels = channels, sections = sections))
+
+}
