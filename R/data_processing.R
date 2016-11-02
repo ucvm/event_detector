@@ -11,7 +11,8 @@
 filter_by_tracks = function(data, track_size_cutoff){
 
   track_sizes = data %>% group_by(Well, Label) %>% tally()
-  track_size_filtered = track_sizes %>% filter(n > track_size_cutoff)
+  track_size_filtered = track_sizes %>%
+    filter(n > track_size_cutoff, !is.na(Label))
   data_filtered = inner_join(data, track_size_filtered)
 
   return(data_filtered)
