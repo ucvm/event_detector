@@ -27,4 +27,3 @@ a ggplot object
 Plot the individual tracks of a well with the option to show peaks and to show only tracks with
 detected peaks
 }
-

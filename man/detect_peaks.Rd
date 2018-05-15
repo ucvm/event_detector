@@ -19,4 +19,3 @@ dataframe with information about each peak
 The main function to detect the peaks in the data.  Best results with baseline corrected data.
 Uses the \code{\link[pracma]{findpeaks}} function.
 }
-

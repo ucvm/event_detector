@@ -17,4 +17,3 @@ dataframe with corrected intensities
 Baseline correct the raw intensity data.  Uses \code{\link[baseline]{baseline}} with the "irls"
 method to correct the baseline.
 }
-

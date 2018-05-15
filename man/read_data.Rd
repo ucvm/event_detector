@@ -28,4 +28,3 @@ any way.  It detectes the correct section of the csv file to import by looking f
 file or the next flag, which ever comes first.  It also cleans up the raw data, removing
 extraneous columns and extracting the well name and multiple fields of view if present.
 }
-

@@ -12,4 +12,3 @@ filter_by_tracks(data, track_size_cutoff)
 \description{
 Filter data by the number of tracks or time points.  Used to get rid of incomplete tracks.
 }
-

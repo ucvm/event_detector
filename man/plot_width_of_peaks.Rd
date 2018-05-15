@@ -14,4 +14,3 @@ plot_width_of_peaks(peak_stats, peaks)
 \description{
 Plot the average width of peaks detected per well
 }
-

@@ -77,7 +77,7 @@ read_data = function(path, section = "cy5", convert_time = 1000 * 60, channel = 
   if (stringr::str_detect(raw$Section[1], "fld")) {
     message("Detected multiple fields")
     raw = raw %>%
-      tidyr::extract(Section, c("Row", "Col", "Field" ), "([A-Z]{1}) - ([0-9]+) \\(fld ([12]{1}) - .*\\)") %>%
+      tidyr::extract(Section, c("Row", "Col", "Field" ), "([A-Z]{1}) - ([0-9]+) \\(fld ([123]{1}) - .*\\)") %>%
       tidyr::unite(Well, Row, Col, sep = "") %>% tidyr::unite(Well, Well, Field, sep = "_")
   } else {
     message("No fields detected")

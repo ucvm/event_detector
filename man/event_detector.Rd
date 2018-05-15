@@ -9,4 +9,3 @@ event_detector()
 \description{
 Run event detector app
 }
-

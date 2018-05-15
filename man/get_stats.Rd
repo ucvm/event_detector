@@ -18,4 +18,3 @@ a data.frame with the data summarized by well.  Contains columns for the number 
 \description{
 Get stats about peaks present in each well
 }
-

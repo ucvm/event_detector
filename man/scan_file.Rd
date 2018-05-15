@@ -15,4 +15,3 @@ list Returns a named list with two entries, channels and sections
 \description{
 Scan raw file for channels and sections
 }
-

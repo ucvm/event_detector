@@ -14,4 +14,3 @@ plot_number_of_peaks(peak_stats, peaks)
 \description{
 Plot the average number of peaks detected per well
 }
-
