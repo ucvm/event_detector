@@ -22,73 +22,83 @@
 
 read_data = function(path, section = "cy5", convert_time = 1000 * 60, channel = "Ch 3") {
 
-  raw = readr::read_lines(path)
+  # load it all up into a single column dataframe
+  df = vroom::vroom(path, col_names = FALSE)
 
-  # mark the start of the section of interest and stop if we can't find it
-  startidx = which(str_detect(raw, section)) + 1
-  if (length(startidx) == 0) stop("Couldn't find section named ", section)
+  # find our sections and mark the starts and ends
+  markers = df$X1[str_detect(df$X1,"==========")]
+  sections = str_match(markers, "=+>(.*)<==+")[,2]
+  starts = match(markers, df$X1)
+  ends = c(starts[2:3] - 1, nrow(df))
 
+  # split into sections and read each section in properly (comma-delimited)
+  section_dfs = purrr::map2(starts, ends, ~df[.x:.y,]) %>%
+    purrr::set_names(sections)
+  sp = purrr::map(section_dfs, read_section)
 
-  markers = which(str_detect(raw,"==========")) # find all the other markers
-  markers = markers[markers > startidx]  # get rid of ones above our start
-  endidx = length(raw) # set the end index
+  # keep the section, channel, and columns we need and clean up the horrid names
+  cols_needed = c("section", "target", str_c(c("dens_levels", "time"),
+                                             janitor::make_clean_names(channel), sep = "_"))
+  final = sp[[section]]
+  final = final[, colnames(final) %in% cols_needed]
 
-  # if we have a marker before the end then this is our new end
-  if (min(markers) < endidx) endidx = min(markers) - 1
-  if (length(endidx) != 0) raw = raw[startidx:endidx] # get the lines in our section
+  # one more name clean up
+  colnames(final) = final_names(colnames(final))
 
-  # identify the columns we want
-  columns = raw[str_detect(raw, "Section")]
-  channels = raw[str_detect(raw, "Ch")]
-  channels = channels %>% str_split(",") %>% "[["(1)
-  columns = columns %>% str_split(",") %>% "[["(1)
+  # clean up the row-column column and extract field if present
+  final = clean_row_columns(final)
 
-  uniq_channels = unique(channels[channels != ""])
-
-  if (!channel %in% uniq_channels) {
-    stop("Couldn't find channel named ", channel, " Should be one of ", paste(uniq_channels, collapse = ", "))
+  # finall convert the time column if requested
+  if (!is.na(convert_time) && is.numeric(convert_time)) {
+    final = final %>% mutate(Time = Time / convert_time)
   }
 
-  col_types = list()
 
-  # here we create the column type vector using readr's character syntax
-  for (i in 1:length(columns)) {
-    if (columns[i] %in%  c("Section", "Label")) {
-      col_types[i] = "c"
-    } else if (columns[i] == "Dens - Levels" && channels[i] == channel) {
-      col_types[i] = "n"
-    } else if (columns[i] == "Time") {
-      col_types[i] = "n"
-    } else {
-      col_types[i] = "_"
-    }
-  }
-
-  col_types = paste(col_types, collapse = "")
-  #col_names = c("Section", "Label", "Time", "Intensity")
-
-  # parse the data
-  raw = paste0(raw, collapse = "\n")
-  #raw = readr::read_csv(raw, skip = 2, col_names = col_names, col_types = col_types)
-  raw = readr::read_csv(raw, skip = 1, col_types = col_types) %>%
-    dplyr::rename(Intensity = `Dens - Levels`)
+  return(final)
+}
 
 
-  if (stringr::str_detect(raw$Section[1], "fld")) {
+read_section = function(ds) {
+  # this function reads in a single section and cleans up the mess that is the column names
+  data = str_c(ds$X1[-c(1:3)], collapse = "\n")
+  cols = str_split(ds[3,], ",")[[1]]
+  chans = str_split(ds[2,], ",")[[1]]
+
+  # clean up names and add channel info
+  cols = str_c(cols, chans, sep = "_")
+  cols = janitor::make_clean_names(stringi::stri_trans_general(cols, "latin-ascii"))
+
+  return(
+    vroom::vroom(data, delim = ",", col_names = cols)
+  )
+}
+
+
+clean_row_columns = function(df) {
+
+  if (stringr::str_detect(df$Section[1], "fld")) {
     message("Detected multiple fields")
-    raw = raw %>%
+    df = df %>%
       tidyr::extract(Section, c("Row", "Col", "Field" ), "([A-Z]{1}) - ([0-9]+) \\(fld ([123]{1}) - .*\\)") %>%
       tidyr::unite(Well, Row, Col, sep = "") %>% tidyr::unite(Well, Well, Field, sep = "_")
   } else {
     message("No fields detected")
-    raw = raw %>%
+    df = df %>%
       tidyr::extract(Section, c("Row", "Col" ), "([A-Z]{1}) - ([0-9]+)") %>%
       tidyr::unite(Well, Row, Col, sep = "")
   }
-  if (!is.na(convert_time) && is.numeric(convert_time)) {
-    raw = raw %>% mutate(Time = Time / convert_time)
-  }
-  return(raw)
+
+  return(df)
+}
+
+
+final_names = function(x) {
+
+  x = str_remove(x, "ch_[23]")
+  x[str_detect(x, "dens_levels")] = "Intensity"
+  x = str_to_sentence(str_remove_all(x, "_"))
+  return(x)
+
 }
 
 

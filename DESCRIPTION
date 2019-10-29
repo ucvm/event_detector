@@ -17,6 +17,10 @@ Imports:
     readr,
     stringr,
     ggplot2,
-    shiny
+    shiny,
+    janitor,
+    stringi,
+    vroom,
+    purrr
 RoxygenNote: 6.0.1
 Suggests: testthat

@@ -11,19 +11,19 @@ library(stringr)
 library(dplyr)
 library(ggplot2)
 library(DT)
-library(multidplyr)
+# library(multidplyr)
 library(eventDetector)
 
 # set env variable for zip to work
-Sys.setenv(R_ZIPCMD="/usr/bin/zip")
+#Sys.setenv(R_ZIPCMD="/usr/bin/zip")
 
 # setup multidplyr
-cluster = create_cluster(8)
-cluster %>%  cluster_eval({
-  library(eventDetector)
-  library(dplyr)
-  library(tidyr)
-})
+# cluster = create_cluster(8)
+# cluster %>%  cluster_eval({
+#   library(eventDetector)
+#   library(dplyr)
+#   library(tidyr)
+# })
 
 
 ui = shinyUI(fluidPage(theme = shinytheme("spacelab"),
@@ -118,8 +118,8 @@ server = shinyServer(function(input, output, session) {
 
       incProgress(0.5)
       baseline_data = raw() %>%
-        partition(Well, Label, cluster = cluster) %>%
-        do(baseline_correct(.)) %>% collect()
+        group_by(Well, Label) %>%
+        do(baseline_correct(.))
       incProgress(1)
     })
 
@@ -143,12 +143,13 @@ server = shinyServer(function(input, output, session) {
       return(NULL)
     }
 
-    cluster %>%
-      cluster_assign_expr("minpeakdistance", input$minpeakdistance) %>%
-      cluster_assign_expr("minpeakheight", input$minpeakheight)
+    # cluster %>%
+    #   cluster_assign_expr("minpeakdistance", input$minpeakdistance) %>%
+    #   cluster_assign_expr("minpeakheight", input$minpeakheight)
 
-    filtered() %>% partition(Well, Label, cluster = cluster) %>%
-      do(detect_peaks(., minpeakheight = minpeakheight, minpeakdistance = minpeakdistance)) %>%
+    filtered() %>%
+      group_by(Well, Label) %>%
+      do(detect_peaks(., minpeakheight = input$minpeakheight, minpeakdistance = input$minpeakdistance)) %>%
       collect()
 
   })
