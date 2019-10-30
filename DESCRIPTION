@@ -21,6 +21,7 @@ Imports:
     janitor,
     stringi,
     vroom,
-    purrr
+    purrr,
+    reshape2
 RoxygenNote: 6.0.1
 Suggests: testthat

@@ -37,7 +37,7 @@ read_data = function(path, section = "cy5", convert_time = 1000 * 60, channel = 
   sp = purrr::map(section_dfs, read_section)
 
   # keep the section, channel, and columns we need and clean up the horrid names
-  cols_needed = c("section", "target", str_c(c("dens_levels", "time"),
+  cols_needed = c("section", "target", str_c(c("label","dens_levels", "time"),
                                              janitor::make_clean_names(channel), sep = "_"))
   final = sp[[section]]
   final = final[, colnames(final) %in% cols_needed]

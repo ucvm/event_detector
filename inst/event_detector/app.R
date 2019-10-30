@@ -114,16 +114,31 @@ server = shinyServer(function(input, output, session) {
       return(NULL)
     }
 
-    withProgress(message = "Baseline correcting...", value = 0, {
+    # group the data
+    spectra = raw() %>%
+      group_by(Well, Label) %>%
+      nest()
 
-      incProgress(0.5)
-      baseline_data = raw() %>%
-        group_by(Well, Label) %>%
-        do(baseline_correct(.))
-      incProgress(1)
-    })
+    # set up our progess indicator
+    progress = shiny::Progress$new(max = nrow(spectra))
+    progress$set(message = "Baseline correcting...", value = 0)
+    on.exit(progress$close())
+
+    updateProgress = function() {
+      value = progress$getValue()
+      value = value + 1
+      progress$set(value = value)
+    }
+
+
+    baseline_data = spectra %>%
+      mutate(spectra = purrr::map(data, ~baseline_correct(.x, updateProgress))) %>%
+      unnest(spectra) %>%
+      ungroup() %>%
+      dplyr::select(-data)
 
     return(baseline_data)
+
   })
 
 
@@ -143,14 +158,29 @@ server = shinyServer(function(input, output, session) {
       return(NULL)
     }
 
-    # cluster %>%
-    #   cluster_assign_expr("minpeakdistance", input$minpeakdistance) %>%
-    #   cluster_assign_expr("minpeakheight", input$minpeakheight)
-
-    filtered() %>%
+    peak_data = filtered() %>%
       group_by(Well, Label) %>%
-      do(detect_peaks(., minpeakheight = input$minpeakheight, minpeakdistance = input$minpeakdistance)) %>%
-      collect()
+      nest()
+
+    # set up our progess indicator
+    progress = shiny::Progress$new(max = nrow(peak_data))
+    progress$set(message = "Locating peaks...", value = 0)
+    on.exit(progress$close())
+
+    updateProgress = function() {
+      value = progress$getValue()
+      value = value + 1
+      progress$set(value = value)
+    }
+
+     peak_data %>%
+       mutate(peaks = purrr::map(data,
+                          ~detect_peaks(.x, minpeakheight = input$minpeakheight,
+                                        minpeakdistance = input$minpeakdistance,
+                                        updateProgress = updateProgress))) %>%
+       unnest(peaks) %>%
+       ungroup() %>%
+       dplyr::select(-data)
 
   })
 

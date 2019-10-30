@@ -32,10 +32,9 @@ filter_by_tracks = function(data, track_size_cutoff){
 #' @return dataframe with information about each peak
 #' @export
 #'
-detect_peaks = function(data, ...) {
-  spectra = data %>%
-    dplyr::select(Intensity, Time) %>%
-    tidyr::spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
+detect_peaks = function(data, updateProgress = NULL, ...) {
+
+  spectra = reshape2::acast(data, 1~Time, value.var = "Intensity")
 
   spectra = spectra[1,]
   peak_idx = pracma::findpeaks(spectra, ...)
@@ -50,6 +49,11 @@ detect_peaks = function(data, ...) {
     End = as.numeric(names(spectra)[peak_idx[,4]])
   )
   peak_df = peak_df %>% mutate(Width = End - Start)
+
+  if (is.function(updateProgress)) {
+    updateProgress()
+  }
+
   return(peak_df)
 }
 
@@ -65,12 +69,18 @@ detect_peaks = function(data, ...) {
 #' @return dataframe with corrected intensities
 #' @export
 #'
-baseline_correct = function(data) {
-  spectra = data %>%
-    dplyr::select(Intensity, Time) %>%
-    tidyr::spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
+baseline_correct = function(data, updateProgress = NULL) {
+  # spectra = data %>%
+  #   dplyr::select(Intensity, Time) %>%
+  #   tidyr::spread(Time, Intensity)  %>% "["(1,) %>% as.matrix()
+  spectra = reshape2::acast(data, 1~Time, value.var = "Intensity")
 
   bc = baseline::baseline(spectra, method = "irls")
   corrected = baseline::getCorrected(bc)[1,]
+
+  if (is.function(updateProgress)) {
+    updateProgress()
+  }
+
   return(data.frame(Time = as.numeric(names(corrected)), Intensity = corrected))
 }
