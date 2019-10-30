@@ -11,7 +11,7 @@ Easiest way to is to use `devtools`
 # if you don't already have it
 install.packages("devtools")
 
-devtools::install_bitbucket("mlworken/eventDetector")
+devtools::install_github("ucvm/event_detector")
 ```
 
 ## Usage
