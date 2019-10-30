@@ -4,7 +4,7 @@
 \alias{baseline_correct}
 \title{Baseline correct}
 \usage{
-baseline_correct(data)
+baseline_correct(data, updateProgress = NULL)
 }
 \arguments{
 \item{data}{dataframe Usually from \code{\link{read_data}}. Must contain columns called

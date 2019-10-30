@@ -4,7 +4,7 @@
 \alias{detect_peaks}
 \title{Detect peaks}
 \usage{
-detect_peaks(data, ...)
+detect_peaks(data, updateProgress = NULL, ...)
 }
 \arguments{
 \item{data}{dataframe Usually from \code{\link{baseline_correct}}. Must contain columns called
